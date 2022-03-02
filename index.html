@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Learning Depth Completion of Transparent Objects using Augmented Unpaired Data</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <h1>Learning Depth Completion of Transparent Objects using Augmented Unpaired Data</h1>
+	<div class="centertext">Floris Erich, Bruno Leme, Noriaki Ando, Ryo Hanai, Yukiyasu Domae</div>
+	<div class="centertext">
+	National Institute of Advanced Industrial Science and Technology<br />
+	</div>
+	<div class="logos">
+		<a href="https://www.aist.go.jp/index_en.html"><img src="images/logo.png" alt="AIST logo" /></a>
+	</div>
+	
+	<div class="centertext">[ Paper | <a href="https://github.com/FlorisE/faking_depth_ros">Code</a> ]</div>
+	
+	<p>Abstract</p>
+	<p>
+	We propose a technique for depth completion of transparent objects using augmented data captured directly from the real environment.
+	Using cyclic adversarial learning we train translators to convert between painted versions of the objects and their real transparent counterpart.
+	The translators are trained on unpaired data, hence datasets can be created rapidly and without any manual labelling.
+	This approach outperforms SOTA approaches that are not trained on task specific data.
+	Because our approach is easier to apply to specific tasks than the SOTA approach, it is a viable technique for performing tasks such as manipulation of transparent objects.
+	We show how the technique can be used to create an object manipulation application with a robot in a dishwasher environment.
+	</p>
+
+	<p>Acknowledgements</p>
+	<p>
+	This work was supported by JST [Moonshot R&D][Grant Number JPMJMS2031].
+This research is subsidized by New Energy and Industrial Technology Development Organization (NEDO) under a project JPNP20016.
+This paper is one of the achievements of joint research with and is jointly owned copyrighted material of ROBOT Industrial Basic Technology Collaborative Innovation Partnership.
+	</p>
+	
+	<div class="logos">
+		<a href="https://www.jst.go.jp/moonshot/en/index.html"><img src="images/moonshot-logo.png" alt="Moonshot logo" /></a>
+		<a href="https://robocip.or.jp/"><img src="images/robocip_logo.svg" alt="Robocip logo" width="455" height="79" /></a>
+	</div>
+	
+	<h2>Contents</h2>
+	<ul>
+		<li><a href="#quantitative">Quantitative results</a></li>
+		<li><a href="#qualitative">Qualitative results</a></li>
+	</ul>
+	
+	<h2 link="quantitative">Quantitative results</h2>
+	
+	<table>
+		<tr>
+			<th>Network</th>
+			<th>Parameters (generator)</th>
+			<th>Parameters (discriminator)</th>
+			<th>RMSE (m) ↓</th>
+			<th>MAE (m) ↓</th>
+			<th>Rel ↓</th>
+			<th>1.05</th>
+			<th>1.10</th>
+			<th>1.25</th>
+		</tr>
+		<tr>
+			<td>RGBD-U-Net</td>
+			<td>218,007,172</td>
+			<td>11,165,441</td>
+			<td>0.055</td>
+			<td>0.037</td>
+			<td>0.068</td>
+			<td>0.568</td>
+			<td>0.803</td>
+			<td>0.939</td>
+		</tr>
+		<tr>
+			<td>RGBD-ResNet</td>
+			<td>35,282,828</td>
+			<td>11,165,441</td>
+			<td>0.098</td>
+			<td>0.078</td>
+			<td>0.147</td>
+			<td>0.270</td>
+			<td>0.470</td>
+			<td>0.808</td>
+		</tr>
+		<tr>
+			<td>Depth-U-Net</td>
+			<td>217,997,953</td>
+			<td>11,162,369</td>
+			<td>0.063</td>
+			<td>0.043</td>
+			<td>0.079</td>
+			<td>0.498</td>
+			<td>0.776</td>
+			<td>0.925</td>
+		</tr>
+		<tr>
+			<td>Depth-ResNet</td>
+			<td>35,264,003</td>
+			<td>11,162,369</td>
+			<td>0.179</td>
+			<td>0.154</td>
+			<td>0.268</td>
+			<td>0.042</td>
+			<td>0.103</td>
+			<td>0.554</td>
+		</tr>
+	</table>
+	
+	<p>We have tested some other models, such as direct Color to Depth, but this suffered from mode collapse and did not produce good results.</p>
+	
+	<p>
+	Another approach is to train a Color2Color translator to generate transparent color images from their opaque counterpart.
+	Afterwards a network can be trained to learn (translated) transparent color to depth using the original depth data captured for the opaque object.
+	Applying this method to our validation set actually produces slightly better results than reported here (we noticed a 10% decrease in RMSE vs RGBD2RGBD), but requires a more complicated network structure.
+	</p>
+	
+	<h2 link="models">Qualitative results</h2>
+	<p>Extended version of the table in our paper</p>
+	<table>
+	
+	</table>
+	
+  </body>
+</html>
