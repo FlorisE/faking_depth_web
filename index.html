@@ -15,15 +15,16 @@
 		<a href="https://www.aist.go.jp/index_en.html"><img src="images/logo.png" alt="AIST logo" /></a>
 	</div>
 	
-	<div class="centertext">[ Paper | <a href="https://github.com/FlorisE/faking_depth_ros">Code</a> ]</div>
+	<div class="centertext">[ Paper | Data | Code ]</div>
+	<div>Preprint, data and code will be released on a later date</div>
 	
 	<p>Abstract</p>
 	<p>
-	We propose a technique for depth completion of transparent objects using augmented data captured directly from the real environment.
+	We propose a technique for depth completion of transparent objects using augmented data captured directly from real environments with complicated geometry.
 	Using cyclic adversarial learning we train translators to convert between painted versions of the objects and their real transparent counterpart.
 	The translators are trained on unpaired data, hence datasets can be created rapidly and without any manual labelling.
-	This approach outperforms SOTA approaches that are not trained on task specific data.
-	Because our approach is easier to apply to specific tasks than the SOTA approach, it is a viable technique for performing tasks such as manipulation of transparent objects.
+	Our technique does not make any assumptions about the geometry of the environment, unlike previous SOTA systems that for example assume easily observable occlusion and contact edges.
+	We show how our technique outperforms a SOTA approach, ClearGrasp, that is not trained on environments that have complicated geometry and makes assumptions about the structure of the environment which makes it less applicable for this scenario.
 	We show how the technique can be used to create an object manipulation application with a robot in a dishwasher environment.
 	</p>
 
@@ -43,9 +44,15 @@ This paper is one of the achievements of joint research with and is jointly owne
 	<ul>
 		<li><a href="#quantitative">Quantitative results</a></li>
 		<li><a href="#qualitative">Qualitative results</a></li>
+		<li><a href="#cleargrasp">ClearGrasp on our validation set</a></li>
+		<li><a href="#cleargrasp-tl">ClearGrasp transfer learning experiment</a></li>
 	</ul>
 	
-	<h2 link="quantitative">Quantitative results</h2>
+	<h2 id="quantitative">Quantitative results</h2>
+	
+	<h3>Generator network ablation</h3>
+	
+	<p>We evaluated U-Net and ResNet with 9 residual blocks on both the Depth and RGBD modalities.</p>
 	
 	<table>
 		<tr>
@@ -55,79 +62,263 @@ This paper is one of the achievements of joint research with and is jointly owne
 			<th>RMSE (m) ↓</th>
 			<th>MAE (m) ↓</th>
 			<th>Rel ↓</th>
-			<th>1.05</th>
-			<th>1.10</th>
-			<th>1.25</th>
+			<th>1.05 ↑</th>
+			<th>1.10 ↑</th>
+			<th>1.25 ↑</th>
 		</tr>
 		<tr>
 			<td>RGBD-U-Net</td>
 			<td>218,007,172</td>
 			<td>11,165,441</td>
-			<td>0.055</td>
-			<td>0.037</td>
-			<td>0.068</td>
-			<td>0.568</td>
-			<td>0.803</td>
-			<td>0.939</td>
+			<td>0.061</td>
+			<td>0.040</td>
+			<td>0.072</td>
+			<td>0.528</td>
+			<td>0.767</td>
+			<td>0.940</td>
 		</tr>
 		<tr>
 			<td>RGBD-ResNet</td>
 			<td>35,282,828</td>
 			<td>11,165,441</td>
-			<td>0.098</td>
-			<td>0.078</td>
-			<td>0.147</td>
-			<td>0.270</td>
-			<td>0.470</td>
-			<td>0.808</td>
+			<td>0.092</td>
+			<td>0.074</td>
+			<td>0.135</td>
+			<td>0.250</td>
+			<td>0.482</td>
+			<td>0.853</td>
 		</tr>
 		<tr>
 			<td>Depth-U-Net</td>
 			<td>217,997,953</td>
 			<td>11,162,369</td>
-			<td>0.063</td>
-			<td>0.043</td>
-			<td>0.079</td>
-			<td>0.498</td>
-			<td>0.776</td>
-			<td>0.925</td>
+			<td>0.058</td>
+			<td>0.035</td>
+			<td>0.061</td>
+			<td>0.589</td>
+			<td>0.861</td>
+			<td>0.954</td>
 		</tr>
 		<tr>
 			<td>Depth-ResNet</td>
 			<td>35,264,003</td>
 			<td>11,162,369</td>
-			<td>0.179</td>
-			<td>0.154</td>
-			<td>0.268</td>
-			<td>0.042</td>
-			<td>0.103</td>
-			<td>0.554</td>
+			<td>0.145</td>
+			<td>0.128</td>
+			<td>0.229</td>
+			<td>0.113</td>
+			<td>0.232</td>
+			<td>0.581</td>
 		</tr>
 	</table>
 	
-	<p>We have tested some other models, such as direct Color to Depth, but this suffered from mode collapse and did not produce good results.</p>
+	<h3>Comparison with other methods</h3>
+	
+	<p>We compare RGBD-U-Net to ClearGrasp, ClearGrasp-Dishwasher (ClearGrasp with Transfer Learning based on our environment, see <a href="#cleargrasp-tl">below</a>) and Joint Bilateral Filter.</p>
+	
+	<table>
+		<tr>
+			<th>Method</th>
+			<th>RMSE (m) ↓</th>
+			<th>MAE (m) ↓</th>
+			<th>Rel ↓</th>
+			<th>1.05 ↑</th>
+			<th>1.10 ↑</th>
+			<th>1.25 ↑</th>
+		</tr>
+		<tr>
+			<td>ClearGrasp</td>
+			<td>0.125</td>
+			<td>0.092</td>
+			<td>0.161</td>
+			<td>0.311</td>
+			<td>0.476</td>
+			<td>0.747</td>
+		</tr>
+		<tr>
+			<td>ClearGrasp-Dishwasher</td>
+			<td>0.140</td>
+			<td>0.111</td>
+			<td>0.193</td>
+			<td>0.188</td>
+			<td>0.314</td>
+			<td>0.661</td>
+		</tr>
+		<tr>
+			<td>JBF</td>
+			<td>0.067</td>
+			<td>0.048</td>
+			<td>0.083</td>
+			<td>0.477</td>
+			<td>0.688</td>
+			<td>0.950</td>
+		</tr>
+		<tr>
+			<td>Ours (RGBD-U-Net)</td>
+			<td>0.061</td>
+			<td>0.040</td>
+			<td>0.072</td>
+			<td>0.528</td>
+			<td>0.767</td>
+			<td>0.940</td>
+		</tr>
+	</table>
+		
+		
+	<h2 id="models">Qualitative results</h2>
+	
+	<table>
+		<tr>
+			<th>Sample ID</th>
+			<th>Input Color</th>
+			<th>Input Depth</th>
+			<th>Ours (RGBD-U-Net)</th>
+			<th>ClearGrasp</th>
+			<th>Joint Bilateral Filter</th>
+			<th>Ground truth depth</th>
+		</tr>
+		<tr><td colspan="7" align="center">Three validation examples with the lowest masked MAE using our method</td></tr>
+		<tr>
+			<td>23</td>
+			<td><img width="100%" src="images/23-color-input.png" alt="Sample 23 color input" /></td>
+			<td><img width="100%" src="images/23-depth-input.png" alt="Sample 23 depth input" /></td>
+			<td><img width="100%" src="images/23-depth-output.png" alt="Sample 23 depth output for ours" /></td>
+			<td><img width="100%" src="images/23-cg-output.png" alt="Sample 23 depth output for ClearGrasp" /></td>
+			<td><img width="100%" src="images/23-jbf-output.png" alt="Sample 23 depth output for JBF" /></td>
+			<td><img width="100%" src="images/23-depth-ground-truth.png" alt="Sample 23 ground truth depth" /></td>
+		</tr>
+		<tr>
+			<td>14</td>
+			<td><img width="100%" src="images/14-color-input.png" alt="Sample 14 color input" /></td>
+			<td><img width="100%" src="images/14-depth-input.png" alt="Sample 14 depth input" /></td>
+			<td><img width="100%" src="images/14-depth-output.png" alt="Sample 14 depth output for ours" /></td>
+			<td><img width="100%" src="images/14-cg-output.png" alt="Sample 14 depth output for ClearGrasp" /></td>
+			<td><img width="100%" src="images/14-jbf-output.png" alt="Sample 14 depth output for JBF" /></td>
+			<td><img width="100%" src="images/14-depth-ground-truth.png" alt="Sample 14 ground truth depth" /></td>
+		</tr>
+		<tr>
+			<td>24</td>
+			<td><img width="100%" src="images/24-color-input.png" alt="Sample 24 color input" /></td>
+			<td><img width="100%" src="images/24-depth-input.png" alt="Sample 24 depth input" /></td>
+			<td><img width="100%" src="images/24-depth-output.png" alt="Sample 24 depth output for ours" /></td>
+			<td><img width="100%" src="images/24-cg-output.png" alt="Sample 24 depth output for ClearGrasp" /></td>
+			<td><img width="100%" src="images/24-jbf-output.png" alt="Sample 24 depth output for JBF" /></td>
+			<td><img width="100%" src="images/24-depth-ground-truth.png" alt="Sample 24 ground truth depth" /></td>
+		</tr>
+		<tr><td colspan="7" align="center">Three validation examples with the highest masked MAE using our method</td></tr>
+		<tr>
+			<td>4</td>
+			<td><img width="100%" src="images/04-color-input.png" alt="Sample 4 color input" /></td>
+			<td><img width="100%" src="images/04-depth-input.png" alt="Sample 4 depth input" /></td>
+			<td><img width="100%" src="images/04-depth-output.png" alt="Sample 4 depth output for ours" /></td>
+			<td><img width="100%" src="images/04-cg-output.png" alt="Sample 4 depth output for ClearGrasp" /></td>
+			<td><img width="100%" src="images/04-jbf-output.png" alt="Sample 4 depth output for JBF" /></td>
+			<td><img width="100%" src="images/04-depth-ground-truth.png" alt="Sample 4 ground truth depth" /></td>
+		</tr>
+		<tr>
+			<td>9</td>
+			<td><img width="100%" src="images/09-color-input.png" alt="Sample 9 color input" /></td>
+			<td><img width="100%" src="images/09-depth-input.png" alt="Sample 9 depth input" /></td>
+			<td><img width="100%" src="images/09-depth-output.png" alt="Sample 9 depth output for ours" /></td>
+			<td><img width="100%" src="images/09-cg-output.png" alt="Sample 9 depth output for ClearGrasp" /></td>
+			<td><img width="100%" src="images/09-jbf-output.png" alt="Sample 9 depth output for JBF" /></td>
+			<td><img width="100%" src="images/09-depth-ground-truth.png" alt="Sample 9 ground truth depth" /></td>
+		</tr>
+		<tr>
+			<td>8</td>
+			<td><img width="100%" src="images/08-color-input.png" alt="Sample 8 color input" /></td>
+			<td><img width="100%" src="images/08-depth-input.png" alt="Sample 8 depth input" /></td>
+			<td><img width="100%" src="images/08-depth-output.png" alt="Sample 8 depth output for ours" /></td>
+			<td><img width="100%" src="images/08-cg-output.png" alt="Sample 8 depth output for ClearGrasp" /></td>
+			<td><img width="100%" src="images/08-jbf-output.png" alt="Sample 8 depth output for JBF" /></td>
+			<td><img width="100%" src="images/08-depth-ground-truth.png" alt="Sample 8 ground truth depth" /></td>
+		</tr>
+	</table>
+	
+	<h2 id="cleargrasp">ClearGrasp on our validation set</h2>
 	
 	<p>
-	Another approach is to train a Color2Color translator to generate transparent color images from their opaque counterpart.
-	Afterwards a network can be trained to learn (translated) transparent color to depth using the original depth data captured for the opaque object.
-	Applying this method to our validation set actually produces slightly better results than reported here (we noticed a 10% decrease in RMSE vs RGBD2RGBD), but requires a more complicated network structure.
+		To get an impression of how ClearGrasp fails on our validation set, we included the generated boundaries, masks and surface normals for the above qualitative results.
+		Cross-reference with the table above using the Sample ID.
 	</p>
 	
-	<h2 link="models">Qualitative results</h2>
+	<table>
+		<tr>
+			<th>Sample ID</th>
+			<th>Boundaries</th>
+			<th>Masks</th>
+			<th>Surface Normals</th>
+		</tr>
+		<tr>
+			<td>23</td>
+			<td><img width="100%" src="images/cleargrasp_outlines/23.png" alt="Sample 23 estimated boundaries using ClearGrasp" /></td>
+			<td><img width="100%" src="images/cleargrasp_mask/23.png" alt="Sample 23 estimated mask using ClearGrasp" /></td>
+			<td><img width="100%" src="images/cleargrasp_normals/23.png" alt="Sample 23 estimated surface normals using ClearGrasp" /></td>
+		</tr>
+		<tr>
+			<td>14</td>
+			<td><img width="100%" src="images/cleargrasp_outlines/14.png" alt="Sample 14 estimated boundaries using ClearGrasp" /></td>
+			<td><img width="100%" src="images/cleargrasp_mask/14.png" alt="Sample 14 estimated mask using ClearGrasp" /></td>
+			<td><img width="100%" src="images/cleargrasp_normals/14.png" alt="Sample 14 estimated surface normals using ClearGrasp" /></td>
+		</tr>
+		<tr>
+			<td>24</td>
+			<td><img width="100%" src="images/cleargrasp_outlines/24.png" alt="Sample 24 estimated boundaries using ClearGrasp" /></td>
+			<td><img width="100%" src="images/cleargrasp_mask/24.png" alt="Sample 24 estimated mask using ClearGrasp" /></td>
+			<td><img width="100%" src="images/cleargrasp_normals/24.png" alt="Sample 24 estimated surface normals using ClearGrasp" /></td>
+		</tr>
+		<tr>
+			<td>4</td>
+			<td><img width="100%" src="images/cleargrasp_outlines/04.png" alt="Sample 4 estimated boundaries using ClearGrasp" /></td>
+			<td><img width="100%" src="images/cleargrasp_mask/04.png" alt="Sample 4 estimated mask using ClearGrasp" /></td>
+			<td><img width="100%" src="images/cleargrasp_normals/4.png" alt="Sample 4 estimated surface normals using ClearGrasp" /></td>
+		</tr>
+		<tr>
+			<td>9</td>
+			<td><img width="100%" src="images/cleargrasp_outlines/09.png" alt="Sample 9 estimated boundaries using ClearGrasp" /></td>
+			<td><img width="100%" src="images/cleargrasp_mask/09.png" alt="Sample 9 estimated mask using ClearGrasp" /></td>
+			<td><img width="100%" src="images/cleargrasp_normals/9.png" alt="Sample 9 estimated surface normals using ClearGrasp" /></td>
+		</tr>
+		<tr>
+			<td>8</td>
+			<td><img width="100%" src="images/cleargrasp_outlines/08.png" alt="Sample 8 estimated boundaries using ClearGrasp" /></td>
+			<td><img width="100%" src="images/cleargrasp_mask/08.png" alt="Sample 8 estimated mask using ClearGrasp" /></td>
+			<td><img width="100%" src="images/cleargrasp_normals/8.png" alt="Sample 8 estimated surface normals using ClearGrasp" /></td>
+		</tr>
+	</table>
+	
+	<h2 id="cleargrasp-tl">ClearGrasp transfer learning experiment</h2>
+	
 	<p>
-		This is an extended version of the table in our paper.
-		The main utility of our approach is to generate opaque depth for transparent objects, but as a side effect we also create opaque RGB from the transparent objects, as well as learn an inverse opaque to transparent mapping.
+		Is it possible that ClearGrasp underperforms due to our data being significantly different from their training data?
+		To evaluate this, we trained ClearGrasp's boundary detection network, masks network and surface normals network for 100 iterations on data generated using <a href="https://github.com/MMehdiMousavi/SuperCaustics">SuperCaustics</a>.
+		Click on an image to enlarge:
 	</p>
-	<h3>Transparent to opaque</h3>
-	<p>Click to enlarge</p>
-	<a href="images/rgbd_unet_t2o.png">
-		<img src="images/rgbd_unet_t2o.png" alt="Qualitative results of transparent to opaque conversion" class="qr" />
-	</a>
-	<h3 class="slim">Opaque to transparent</h3>
-	<p>Click to enlarge</p>
-	<a href="images/rgbd_unet_o2t.png">
-		<img src="images/rgbd_unet_o2t.png" alt="Qualitative results of opaque to transparent conversion" class="qr" />
-	</a>
+	
+	<table>
+		<tr>
+			<td><a href="images/sim-0000-rgb.jpg"><img width="100%" src="images/sim-0000-rgb.jpg" alt="Simulation sample 0" /></a></td>
+			<td><a href="images/sim-0072-rgb.jpg"><img width="100%" src="images/sim-0072-rgb.jpg" alt="Simulation sample 72" /></a></td>
+			<td><a href="images/sim-0106-rgb.jpg"><img width="100%" src="images/sim-0106-rgb.jpg" alt="Simulation sample 106" /></a></td>
+			<td><a href="images/sim-0193-rgb.jpg"><img width="100%" src="images/sim-0193-rgb.jpg" alt="Simulation sample 193" /></a></td>
+			<td><a href="images/sim-0265-rgb.jpg"><img width="100%" src="images/sim-0265-rgb.jpg" alt="Simulation sample 265" /></a></td>
+		</tr>
+		<tr>
+			<td><a href="images/sim-0396-rgb.jpg"><img width="100%" src="images/sim-0396-rgb.jpg" alt="Simulation sample 396" /></a></td>
+			<td><a href="images/sim-0513-rgb.jpg"><img width="100%" src="images/sim-0513-rgb.jpg" alt="Simulation sample 513" /></a></td>
+			<td><a href="images/sim-0636-rgb.jpg"><img width="100%" src="images/sim-0636-rgb.jpg" alt="Simulation sample 636" /></a></td>
+			<td><a href="images/sim-0835-rgb.jpg"><img width="100%" src="images/sim-0835-rgb.jpg" alt="Simulation sample 835" /></a></td>
+			<td><a href="images/sim-0971-rgb.jpg"><img width="100%" src="images/sim-0971-rgb.jpg" alt="Simulation sample 971" /></a></td>
+		</tr>
+	</table>
+	
+	<p>
+		We re-evaluated ClearGrasp using the retrained boundary detection and masks networks.
+		The retrained surface normals network was not used as it performed significantly worse than ClearGrasp's original surface boundary network.
+		It should be noted that we aimed to spend a similar amount of time on creating the simulation assets as we spend on recording the training data for our method.
+		It took around three days to produce the assets (glasses, dishwasher, side shelves), whereas our training data was captured within a day.
+		Retraining ClearGrasp using this domain specific data however did not result in any improvement.
+	</p>
 	
   </body>
 </html>
