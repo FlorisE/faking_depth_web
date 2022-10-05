@@ -44,6 +44,7 @@ This paper is one of the achievements of joint research with and is jointly owne
 	<ul>
 		<li><a href="#quantitative">Quantitative results</a></li>
 		<li><a href="#qualitative">Qualitative results</a></li>
+		<li><a href="#novel">Results on novel objects</a></li>
 		<li><a href="#cleargrasp">ClearGrasp on our validation set</a></li>
 		<li><a href="#cleargrasp-tl">ClearGrasp transfer learning experiment</a></li>
 	</ul>
@@ -232,6 +233,85 @@ This paper is one of the achievements of joint research with and is jointly owne
 			<td><img width="100%" src="images/08-cg-output.png" alt="Sample 8 depth output for ClearGrasp" /></td>
 			<td><img width="100%" src="images/08-jbf-output.png" alt="Sample 8 depth output for JBF" /></td>
 			<td><img width="100%" src="images/08-depth-ground-truth.png" alt="Sample 8 ground truth depth" /></td>
+		</tr>
+	</table>
+	
+	<h2 id="novel">Results on novel objects</h2>
+	
+	<p>
+		While not a main goal of this research, our method also shows promise for detecting the depth of previously unseen objects.
+		The following table shows the results on scenes with novel objects.
+		Qualitative results can be found <a href="images/novel.png">here<a>.
+		
+	</p>
+	
+	<table>
+		<tr>
+			<td>Sample ID</td>
+			<th>RMSE (m) ↓</th>
+			<th>MAE (m) ↓</th>
+			<th>Rel ↓</th>
+			<th>1.05 ↑</th>
+			<th>1.10 ↑</th>
+			<th>1.25 ↑</th>
+		</tr>
+		<tr>
+			<td>0</td>
+			<td>0.061</td>
+			<td>0.040</td>
+			<td>0.067</td>
+			<td>0.566</td>
+			<td>0.777</td>
+			<td>0.953</td>
+		</tr>
+		<tr>
+			<td>1</td>
+			<td>0.052</td>
+			<td>0.032</td>
+			<td>0.054</td>
+			<td>0.662</td>
+			<td>0.850</td>
+			<td>0.962</td>
+		</tr>
+			<td>2</td>
+			<td>0.046</td>
+			<td>0.029</td>
+			<td>0.050</td>
+			<td>0.650</td>
+			<td>0.882</td>
+			<td>0.958</td>
+		</tr>
+			<td>3</td>
+			<td>0.049</td>
+			<td>0.035</td>
+			<td>0.066</td>
+			<td>0.467</td>
+			<td>0.816</td>
+			<td>0.971</td>
+		</tr>
+			<td>4</td>
+			<td>0.055</td>
+			<td>0.037</td>
+			<td>0.064</td>
+			<td>0.542</td>
+			<td>0.777</td>
+			<td>0.971</td>
+		</tr>
+			<td>5</td>
+			<td>0.046</td>
+			<td>0.028</td>
+			<td>0.050</td>
+			<td>0.687</td>
+			<td>0.880</td>
+			<td>0.964</td>
+		</tr>
+			<td>Mean</td>
+			<td>0.052</td>
+			<td>0.034</td>
+			<td>0.059</td>
+			<td>0.600</td>
+			<td>0.830</td>
+			<td>0.964</td>
 		</tr>
 	</table>
 	
